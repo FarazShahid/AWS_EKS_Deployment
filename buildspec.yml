@@ -1,0 +1,26 @@
+version: 0.2
+run-as: root
+
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 038269871983.dkr.ecr.us-east-2.amazonaws.com
+      - 038269871983.dkr.ecr.us-east-2.amazonaws.com/demo-aws-eks
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...          
+      - docker build -t demo-aws-eks .
+      - docker tag demo-aws-eks:latest 038269871983.dkr.ecr.us-east-2.amazonaws.com/demo-aws-eks:latest      
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push 038269871983.dkr.ecr.us-east-2.amazonaws.com/demo-aws-eks:latest
+      - echo Writing image definitions file...
+      - printf '[{"name":"%s","imageUri":"%s"}]' $CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+artifacts:
+    files: imagedefinitions.json
+
