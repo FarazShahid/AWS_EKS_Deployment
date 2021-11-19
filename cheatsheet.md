@@ -1,0 +1,4 @@
+
+
+## IF PODS ARE STUCK IN PENDING AND NO LOGS AVAILABLE
+`kubectl get events`
